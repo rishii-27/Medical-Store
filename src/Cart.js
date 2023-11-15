@@ -12,7 +12,7 @@ const Cart = () => {
   const handleShow = () => setShow(true);
 
   const removeItem = (id) => {
-  
+    cartCtx.removeCartItem(id);
   };
 
   const overallTotal = cartCtx.cartItems.reduce((total, item) => {
@@ -38,9 +38,9 @@ const Cart = () => {
             <Col>Action </Col>
           </Row>
           <hr />
-          {cartCtx.cartItems.map((item,index) => (
-            <div key={index}>
-              <Row>
+          {cartCtx.cartItems.map((item) => (
+            <div key={item._id}>
+              <Row key={item._id}>
                 <Col>{item.name}</Col>
                 <Col>{item.price}</Col>
                 <Col>{item.quantity}</Col>
@@ -48,7 +48,7 @@ const Cart = () => {
                   <Button
                     variant="danger"
                     onClick={() => {
-                      removeItem(index);
+                      removeItem(item._id);
                     }}
                   >
                     Remove

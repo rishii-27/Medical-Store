@@ -8,7 +8,7 @@ export const StoreContextProvider = (props) => {
 
   useEffect(() => {
     // Fetch data from the API
-    fetch("https://crudcrud.com/api/18d5bbfb61144c829b8324e6d4feb3b9/items", {
+    fetch("https://crudcrud.com/api/d271cb6de91a427ebe878e143104f588/items", {
       method: "GET",
     })
       .then((response) => response.json()) // Parse the response body as JSON
@@ -20,8 +20,22 @@ export const StoreContextProvider = (props) => {
       });
   }, []);
 
+  useEffect(() => {
+    // Fetch data from the API
+    fetch("https://crudcrud.com/api/d271cb6de91a427ebe878e143104f588/cart", {
+      method: "GET",
+    })
+      .then((response) => response.json()) // Parse the response body as JSON
+      .then((data) => {
+        setCartItems(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, []);
+
   const addMedsToList = (item) => {
-    fetch(`https://crudcrud.com/api/18d5bbfb61144c829b8324e6d4feb3b9/items`, {
+    fetch(`https://crudcrud.com/api/d271cb6de91a427ebe878e143104f588/items`, {
       method: "POST",
       body: JSON.stringify(item),
       headers: {
@@ -41,7 +55,43 @@ export const StoreContextProvider = (props) => {
   };
 
   const addMedsToCart = (item) => {
+    fetch(`https://crudcrud.com/api/d271cb6de91a427ebe878e143104f588/cart`, {
+      method: "POST",
+      body: JSON.stringify(item),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Failed to add medicine. Status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data) => console.log(data))
+      .catch((error) => console.error(error));
+
     setCartItems([...cartItems, item]);
+  };
+
+  const removeFromCartHandle = (id) => {
+    // Send DELETE request to the API
+    fetch(
+      `https://crudcrud.com/api/d271cb6de91a427ebe878e143104f588/cart/${id}`,
+      {
+        method: "DELETE",
+      }
+    )
+      .then(() => {
+        // Fetch updated cart items from the API
+        return fetch(
+          `https://crudcrud.com/api/d271cb6de91a427ebe878e143104f588/cart`
+        );
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        setCartItems(data);
+      });
   };
 
   const contextValue = {
@@ -49,8 +99,9 @@ export const StoreContextProvider = (props) => {
     addToList: addMedsToList,
     cartItems: cartItems,
     addToCart: addMedsToCart,
+    removeCartItem: removeFromCartHandle,
   };
-  console.log(contextValue.enteredItem);
+  console.log(cartItems);
 
   return (
     <StoreContext.Provider value={contextValue}>
