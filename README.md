@@ -1,1 +1,1 @@
-Medicine Store App!
+Medicine Store App with Stock Management!
